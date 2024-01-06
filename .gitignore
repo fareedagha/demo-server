@@ -1,0 +1,8 @@
+/node_modules
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+logs/bundle_node.log
+logs/bundle_node.log
+.history
