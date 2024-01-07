@@ -22,7 +22,6 @@ class UserService {
   }
 
   findByEmail(email) {
-    console.log('ddddd',email)
     return this.repository.findByEmail(email);
   }
 
@@ -41,7 +40,6 @@ class UserService {
     return this.validate(user, {
       reqType: "POST",
     }).then(async () => {
-      console.log('user', user)
       if (user.password) {
         const salt = await bcrypt.genSalt(15)
         user.password = await bcrypt.hash(user.password, salt);

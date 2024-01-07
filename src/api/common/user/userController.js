@@ -9,18 +9,6 @@ router.get('/', (req, res) => {
     .then(users => res.send(users));
 });
 
-router.get('/current', (req, res) => {
-  userService
-    .findById(req.user.id, req.query)
-    .then(user => {
-      res.send({
-        id: user._id,
-        name: user.name,
-        email: user.email
-      })
-    });
-});
-
 router.put('/current', (req, res) => {
   userService
     .editUser(req.user.id, req.body)
@@ -42,7 +30,6 @@ router.delete('/:id', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-  console.log('res', req.body)
   userService
     .addUser(req.body)
     .then(user => res.send({ insertedId: user.insertedId }))

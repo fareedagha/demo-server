@@ -11,7 +11,11 @@ router.post('/login', async (req, res) => {
   try {
     const user = await userService.findOne({email:email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ details: [
+        {
+          message: 'Invalid email or password',
+        },
+      ], });
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (passwordMatch) {
@@ -31,11 +35,21 @@ router.post('/login', async (req, res) => {
         },
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({  
+        details: [
+          {
+            message: 'Invalid email or password',
+          },
+        ],
+     });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ details: [
+      {
+        message: 'Internal server error',
+      },
+    ], });
   }
 });
 
@@ -61,11 +75,11 @@ router.post('/refresh-token', async (req, res) => {
 
   if (!tokenValid) {
     res.status(401).send({
-      error: {
-        error: {
-          code: 'TokenExpired'
-        }
-      }
+      details: [
+        {
+          message: 'Token Expired',
+        },
+      ],
     });
     return;
   }
@@ -81,27 +95,6 @@ router.post('/refresh-token', async (req, res) => {
   });
 });
 
-router.post('/sign-up', (req, res) => {
-  authService
-    .register(req.body)
-    .then(() => res.send({ message: 'User successfully added.' }))
-    .catch((err) => {
-      res.status(400).json({ error: err.message });
-    });
-});
-
-router.post('/reset-pass', (req, res) => {
-  const {
-    password,
-    confirmPassword,
-    reset_password_token: resetPasswordToken,
-  } = req.body;
-  authService
-    .resetPassword(password, confirmPassword, resetPasswordToken)
-    .then(() => res.send({ message: 'ok' }))
-    .catch((err) => res.status(400).json({ error: JSON.parse(err) }));
-});
-
 router.post('/request-forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -112,11 +105,11 @@ router.post('/request-forgot-password', async (req, res) => {
     });
   } catch (err) {
     res.send({
-      success: false,
-      error: {
-        code: 4001,
-        message: err.message || 'An error occurred during forgot password request.',
-      },
+      details: [
+        {
+          message: 'Internal server error',
+        },
+      ],
     });  }
 });
 

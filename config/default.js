@@ -1,7 +1,7 @@
 module.exports = {
     env: 'dev',
     secretId: '',
-     serverUrl: 'https://2865c199ec81.ngrok.io',
+     serverUrl: 'https://demo-angular-app-ea8e6e3cc9a8.herokuapp.com/',
     
     websocket: {
      // connectionUrl: 'https://c4iznyvfpb.execute-api.us-east-1.amazonaws.com/prod'

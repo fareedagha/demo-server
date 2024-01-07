@@ -18,7 +18,13 @@ class AuthService {
   validate(user) {
     let errors = [];
     if (!user.username) {
-      throw new Error("Username cannot be empty.");
+      throw {
+        details: [
+          {
+            message: "Username cannot be empty.",
+          },
+        ],
+      };
     }
 
     return user;
