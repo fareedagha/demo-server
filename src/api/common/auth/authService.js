@@ -1,7 +1,7 @@
 const UserService = require("../user/userService");
 const qs = require("qs");
 const bcrypt = require('bcrypt');
-// const config = require("../../../../config/default");
+ const defConfig = require("../../../../config/default");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const UserRepository = require("../user/userRepository");
@@ -102,7 +102,7 @@ async forgetPassword(email) {
 
   generateAuthToken(user, ttl) {
     user.id = user._id;
-    const token = jwt.sign(user, config.auth.jwt.secret, {
+    const token = jwt.sign(user, defConfig.auth.jwt.secret, {
       expiresIn: ttl
     });
     return token;
