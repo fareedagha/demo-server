@@ -22,6 +22,7 @@ class UserService {
   }
 
   findByEmail(email) {
+    console.log('ddddd',email)
     return this.repository.findByEmail(email);
   }
 

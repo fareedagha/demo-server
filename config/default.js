@@ -31,10 +31,9 @@ module.exports = {
         outputEncoding: 'hex',
       },
     },
-    mailgun: {
-    //   domain: 'mg.ebail.app',
-    //   server: 'https://api.mailgun.net/v3',
-    //   publicKey : ''
+    mailTraf: {
+      TOKEN: '43079d249306d3ad43011cd309ff9b3a',
+      SENDER_EMAIL : 'fareedagha7440@gmail.com',
     },
 
     db: {

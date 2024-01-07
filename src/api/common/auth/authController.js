@@ -102,75 +102,29 @@ router.post('/reset-pass', (req, res) => {
     .catch((err) => res.status(400).json({ error: JSON.parse(err) }));
 });
 
-router.post('/request-password-reset', (req, res) => {
-  const { username } = req.body;
-  authService.requestPasswordReset(username, (err, data) => {
-    if (err) {
-      if (err.code) {
-        return res.status(400).send({
-          error: err,
-        });
-      }
-      else{
-        return res.status(401).send({
-          error: err,
-        });
-      }
-    }
-    res.send(data);
-  });
+router.post('/request-forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const data = await authService.forgetPassword(email);
+    res.status(200).send({
+      success: true,
+      data: data,
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      error: {
+        code: 4001,
+        message: err.message || 'An error occurred during forgot password request.',
+      },
+    });  }
 });
 
-router.post('/verify-pass-confirmation-code', (req, res) => {
-  authService.verifyPasswordConfirmationCode(req.body, (err, data) => {
-    if (err) {
-      return res.status(400).send({
-        error: err,
-      });
-    }
-    res.send(data);
-  });
-});
 
 router.post('/sign-out', (req, res) => {
   res.send({ message: 'ok' });
 });
 
-router.post('/get-token', async (req, res) => {
-  const data = await authService.awsCallTokenEndpoint(
-    'authorization_code',
-    req.body.code,
-  );
-  console.log('data ', data);
-  res.send(data);
-});
-
-
-router.post('/verify-code', async (req, res) => {
-  authService.verifySoftwareToken(
-    req.body.username,
-    req.body.code,
-    (err, data) => {
-      if (err) {
-        return res.status(401).send({
-          error: err,
-        });
-      }
-      return res.send(data);
-    },
-  );
-});
-
-router.post('/resend-code', async (req, res) => {
-  authService.resendConfirmationCode(req.body.username, (err, data) => {
-    if (err) {
-      return res.status(401).send({
-        error: err,
-      });
-    }
-    return res.send(data);
-  });
-});
 
 // router.post('/refresh-token', (req, res) => {
 //

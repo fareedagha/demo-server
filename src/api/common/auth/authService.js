@@ -1,9 +1,16 @@
 const UserService = require("../user/userService");
 const qs = require("qs");
-const config = require("../../../../config/default");
+const bcrypt = require('bcrypt');
+// const config = require("../../../../config/default");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const UserRepository = require("../user/userRepository");
+const { MailtrapClient } = require("mailtrap");
+const dotenv = require('dotenv');
+const config = dotenv.config().parsed;
+const client = new MailtrapClient({ token: config.TOKEN });
+const sender = { name: "Test Email", email: config.TOKEN.SENDER_EMAIL };
+const nodemailer = require('nodemailer');
 
 class AuthService {
   constructor() {}
@@ -17,40 +24,79 @@ class AuthService {
     return user;
   }
 
-  register(user) {
+  async myCustomMethod(ctx){
+    let cmd = await ctx.sendCommand(
+        'AUTH PLAIN ' +
+            Buffer.from(
+                '\u0000' + ctx.auth.credentials.user + '\u0000' + ctx.auth.credentials.pass,
+                'utf-8'
+            ).toString('base64')
+    );
+
+    if(cmd.status < 200 || cmd.status >=300){
+        throw new Error('Failed to authenticate user: ' + cmd.text);
+    }
+}
+
+async forgetPassword(email) {
+  try {
     const userService = new UserService();
+    console.log('email', email);
 
-    return Promise.resolve()
-      .then(() => this.validate(user))
-      .then((user) => {
-        return userService.findByUsername(user.name).then((u) => {
-          if (u) {
-            throw new Error("User already exists");
-          }
-          return userService.addUser(user);
-        });
+    const user = await userService.findOne({ email });
+    console.log('user', user);
+
+    if (user) {
+      const generatePass = await this.randomPassword();
+      const salt = await bcrypt.genSalt(15);
+      user.password = await bcrypt.hash(generatePass, salt);
+
+      const gmailUser = 'fareedagha7440@gmail.com';
+      const appPassword = 'your-generated-app-password';
+
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: gmailUser,
+          pass: appPassword,
+        },
       });
+
+      let info = await transporter.sendMail({
+        from: 'fareedagha7440@gmail.com',
+        to: email, // Use the user's email as the recipient
+        subject: 'Forgot Password',
+        text: `This is your new password: ${generatePass}`,
+      });
+
+      console.log('Message sent: %s', info.messageId);
+      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+      // Update the user's password in the database
+      const updatedUser = await userService.edit(user._id, { password: user.password });
+
+      return updatedUser;
+    } else {
+      throw {
+        details: [
+          {
+            message: 'User with this email does not exist',
+          },
+        ],
+      };
+    }
+  } catch (error) {
+    console.error('Error sending email:', error);
+    // Handle the error or return an appropriate response
+    throw {
+      details: [
+        {
+          message: 'Error sending email',
+        },
+      ],
+    };
   }
-
-  // resetPassword(password, confirmPassword, resetPasswordToken) {
-  //   const userService = new UserService();
-
-  //   if (password.length < 6) {
-  //     throw new Error("Password should be longer than 6 characters");
-  //   }
-
-  //   if (password !== confirmPassword) {
-  //     throw new Error("Password and its confirmation do not match.");
-  //   }
-
-  //   const tokenContent = cipher.decipherResetPasswordToken(resetPasswordToken);
-  //   if (new Date().getTime() > tokenContent.valid) {
-  //     throw new Error("Reset password token has expired.");
-  //   }
-
-  //   const { salt, passwordHash } = cipher.saltHashPassword(password);
-  //   return userService.changePassword(tokenContent.userId, salt, passwordHash);
-  // }
+}
 
 
 
