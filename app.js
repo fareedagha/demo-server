@@ -31,9 +31,11 @@ app.use(bodyParser.json());
 
 const authController = require("./src/api/common/auth/authController");
 const userController = require("./src/api/common/user/userController");
+const productController = require("./src/api/product/productController");
 const auth = passport.authenticate("jwt", { session: false });
 app.use(`${root}/auth`, authController);
 app.use(`${root}/users`, userController);
+app.use(`${root}/products`, productController);
 app.use(logErrors);
 app.use(clientErrorHandler);
 
