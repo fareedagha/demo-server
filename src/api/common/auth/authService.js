@@ -5,12 +5,11 @@ const bcrypt = require('bcrypt');
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const UserRepository = require("../user/userRepository");
-const { MailtrapClient } = require("mailtrap");
 const dotenv = require('dotenv');
 const config = dotenv.config().parsed;
-const client = new MailtrapClient({ token: config.TOKEN });
-const sender = { name: "Test Email", email: config.TOKEN.SENDER_EMAIL };
 const nodemailer = require('nodemailer');
+const gmailUser = config.SENDER_EMAIL
+const appPassword = config.APP_PASSWORD
 
 class AuthService {
   constructor() {}
@@ -53,13 +52,7 @@ async forgetPassword(email) {
     console.log('user', user);
 
     if (user) {
-      const generatePass = await this.randomPassword();
-      const salt = await bcrypt.genSalt(15);
-      user.password = await bcrypt.hash(generatePass, salt);
-
-      const gmailUser = 'fareedagha7440@gmail.com';
-      const appPassword = 'your-generated-app-password';
-
+      const generatePass = await this.randomPassword(6);
       let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -69,18 +62,12 @@ async forgetPassword(email) {
       });
 
       let info = await transporter.sendMail({
-        from: 'fareedagha7440@gmail.com',
+        from: gmailUser,
         to: email, // Use the user's email as the recipient
         subject: 'Forgot Password',
-        text: `This is your new password: ${generatePass}`,
+        text: `This is your new password for Product Demo App: ${generatePass}`,
       });
-
-      console.log('Message sent: %s', info.messageId);
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-      // Update the user's password in the database
-      const updatedUser = await userService.edit(user._id, { password: user.password });
-
+      const updatedUser = await userService.editUser(user._id, { password: generatePass });
       return updatedUser;
     } else {
       throw {

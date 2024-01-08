@@ -1,5 +1,5 @@
 
-const { ObjectID } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const BaseRepository = require('../../../db/baseRepository');
 // const helpers = require('../../helpers');
 
@@ -53,7 +53,7 @@ class UserRepository extends BaseRepository {
     return this.dbClient
       .then(db => db
         .collection(this.collection)
-        .updateOne({ _id: ObjectID(id) }, { $set: { salt, passwordHash } }));
+        .updateOne({ _id:new ObjectId(id) }, { $set: { salt, passwordHash } }));
   }
 
 

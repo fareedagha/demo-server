@@ -104,7 +104,7 @@ router.post('/request-forgot-password', async (req, res) => {
       data: data,
     });
   } catch (err) {
-    res.send({
+    res.status(500).send({
       details: [
         {
           message: 'Internal server error',

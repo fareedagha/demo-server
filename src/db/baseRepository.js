@@ -1,4 +1,4 @@
-const { ObjectID, ResumeToken } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const getMongoDBClient = require('../db/mongodbClient');
 
 class BaseRepository {
@@ -27,7 +27,7 @@ class BaseRepository {
     const db = await this.dbClient;
     return await db
       .collection(this.collection)
-      .findOne({ _id: ObjectID(id) });
+      .findOne({ _id: new ObjectId(id) });
   }
 
   async findByFilter(filter) {
@@ -71,7 +71,7 @@ class BaseRepository {
     let db = await this.dbClient;
     return await db
       .collection(this.collection)
-      .updateOne({ _id: ObjectID(id) }, { $set: item }, { upsert: true });
+      .updateOne({ _id: new ObjectId(id) }, { $set: item }, { upsert: true });
   }
 
   async update(filter, updateQuery, options) {
@@ -86,12 +86,7 @@ class BaseRepository {
     const db = await this.dbClient;
     return await db
       .collection(this.collection)
-      .deleteOne({ _id: ObjectID(id) });
-
-    // return this.dbClient
-    //   .then(db => db
-    //     .collection(this.collection)
-    //     .remove({ _id: ObjectID(id) }));
+      .deleteOne({ _id: new ObjectId(id) });
   }
 
   list() {
