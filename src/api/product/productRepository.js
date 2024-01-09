@@ -58,7 +58,6 @@ class ProductRepository extends BaseRepository {
 
 
   listAggregated(params) {
-    console.log('params', params)
     let filter = {
       pipeline: [],
       pageSize: params.pageSize,

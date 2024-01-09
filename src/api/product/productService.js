@@ -1,6 +1,7 @@
 const ProductRepository = require("./productRepository");
 const bcrypt = require('bcrypt');
 const Joi = require("@hapi/joi");
+const { getSocket } = require('../webSockets/websocket');
 Joi.objectId = require("joi-objectid")(Joi);
 
 const productSchema = require("./productSchema");
@@ -35,6 +36,7 @@ class ProductService {
       reqType: "POST",
     }).then(async () => {
       let newProduct = await this.repository.add(product);
+      getSocket().broadcast.emit('productAdded', { message: 'A new product has been added!' });
       console.log('new', newProduct)
       return newProduct;
     });
@@ -48,8 +50,8 @@ class ProductService {
 
   async editProduct(id, product) {
     if (product.password) {
-         const salt = await bcrypt.genSalt(15)
-        product.password = await bcrypt.hash(product.password, salt);
+      const salt = await bcrypt.genSalt(15)
+      product.password = await bcrypt.hash(product.password, salt);
     }
     const updatedProduct = await this.repository.edit(id, product);
     return updatedProduct;
@@ -108,7 +110,6 @@ class ProductService {
       }
     }
 
-    console.log(pass);
     return pass;
   }
 

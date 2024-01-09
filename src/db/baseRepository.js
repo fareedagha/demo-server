@@ -5,7 +5,6 @@ class BaseRepository {
    constructor(collectionName) {
     this.dbClient = getMongoDBClient();
     this.collection = collectionName;
-    //  console.log(collectionName)
   }
 
   getCount() {
@@ -99,7 +98,6 @@ class BaseRepository {
   listFiltered(filter) {
     return this.dbClient
       .then(db => {
-        console.log('db', db)
         const data = db.collection(this.collection)
           .find(filter.query || {});
 
@@ -119,7 +117,6 @@ class BaseRepository {
   }
 
   async listAggregated(filter) {
-    console.log('filer', filter)
 
     if (filter.sortBy && filter.orderBy) {
       if (Array.isArray(filter.sortBy)) {
@@ -150,14 +147,8 @@ class BaseRepository {
     }
 
     const db = await this.dbClient;
-    console.log('this.collection', this.collection)
-    console.log('db', db)
-    console.log('dbb', db.collection(this.collection))
-
     const data = db.collection(this.collection)
     .aggregate(filter.pipeline || {}, filter.options)
-
-    // console.log();
     let results = await data.toArray();
     data.close();
 

@@ -5,7 +5,10 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 const config = require("config");
 const { ObjectID } = require('mongodb');
+const { initializeWebSocket } = require('./src/api/webSockets/websocket'); // Adjust the path accordingly
+
 require("./src/passport");
+const http = require('http').createServer(app);
 function logErrors(err, req, res, next) {
   next(err);
 }
@@ -42,10 +45,10 @@ app.use(clientErrorHandler);
 app.get("/", (req, res) => {
   res.send("Hello demo app! ");
 });
-
+initializeWebSocket(http);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}.`);
 });
