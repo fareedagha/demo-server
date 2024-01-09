@@ -28,11 +28,12 @@ router.post('/login', async (req, res) => {
       const accessToken = authService.generateAuthToken(user, 3600); //3600
       // const refreshToken = authService.generateAuthToken(user, 4750); //4800
       return res.send({
-        user:userData,
-        token: {
-          access_token: accessToken,
-          // refresh_token: refreshToken,
-        },
+        token: accessToken
+        // user:userData,
+        // token: {
+        //   access_token: accessToken,
+        // refresh_token: refreshToken,
+        // },
       });
     } else {
       res.status(401).json({  

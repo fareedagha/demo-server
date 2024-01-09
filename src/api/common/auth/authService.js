@@ -29,20 +29,6 @@ class AuthService {
     return user;
   }
 
-  async myCustomMethod(ctx){
-    let cmd = await ctx.sendCommand(
-        'AUTH PLAIN ' +
-            Buffer.from(
-                '\u0000' + ctx.auth.credentials.user + '\u0000' + ctx.auth.credentials.pass,
-                'utf-8'
-            ).toString('base64')
-    );
-
-    if(cmd.status < 200 || cmd.status >=300){
-        throw new Error('Failed to authenticate user: ' + cmd.text);
-    }
-}
-
 async forgetPassword(email) {
   try {
     const userService = new UserService();
