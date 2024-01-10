@@ -26,8 +26,13 @@ router.delete('/:id', (req, res) => {
 router.post('/', (req, res) => {
   productService
     .addProduct(req.body)
-    .then(product => res.send({ productId: product.insertedId }))
-    .catch(err => res.status(400).send(err));
+    .then(product => {
+      res.send({ productId: product.insertedId })
+    })
+    .catch(err => {
+      console.log('err',err)
+      res.status(400).send(err)
+    });
 });
 
 router.put('/:id', (req, res) => {

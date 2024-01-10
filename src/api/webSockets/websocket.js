@@ -20,15 +20,10 @@ function initializeWebSocket(server) {
 
 function getIo() {
   if (!io) {
-    throw new Error('Socket.io not initialized');
+     throw new Error('Socket.io not initialized');
   }
   return io;
 }
-function getSocket() {
-  if (!socketConnection) {
-    throw new Error('Socket.io not initialized');
-  }
-  return socketConnection;
-}
 
-module.exports = { initializeWebSocket, getIo, getSocket };
+
+module.exports = { initializeWebSocket, getIo };

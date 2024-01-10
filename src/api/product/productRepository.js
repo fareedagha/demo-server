@@ -10,6 +10,9 @@ class ProductRepository extends BaseRepository {
   }
 
   format(product) {
+    if (product.createdByUserId) {
+      product.createdByUserId = new ObjectId(product.createdByUserId);
+    }
     return product;
   }
 
@@ -53,7 +56,7 @@ class ProductRepository extends BaseRepository {
     return this.dbClient
       .then(db => db
         .collection(this.collection)
-        .updateOne({ _id:new ObjectId(id) }, { $set: { salt, passwordHash } }));
+        .updateOne({ _id: new ObjectId(id) }, { $set: { salt, passwordHash } }));
   }
 
 
@@ -66,7 +69,7 @@ class ProductRepository extends BaseRepository {
       orderBy: params.orderBy
     }
 
-    
+
 
 
     if (params.email) {
@@ -77,7 +80,7 @@ class ProductRepository extends BaseRepository {
       });
     }
 
-   
+
     if (params.project) {
       filter.pipeline.push({
         $project: this.parseProjectParams(params.project)
@@ -86,7 +89,7 @@ class ProductRepository extends BaseRepository {
     return super.listAggregated(filter);
   }
 
-  parseProjectParams(project){
+  parseProjectParams(project) {
     for (const key in project) {
       if (project.hasOwnProperty(key)) {
         project[key] = parseInt(project[key]);

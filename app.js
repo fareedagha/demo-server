@@ -38,7 +38,7 @@ const productController = require("./src/api/product/productController");
 const auth = passport.authenticate("jwt", { session: false });
 app.use(`${root}/auth`, authController);
 app.use(`${root}/users`, userController);
-app.use(`${root}/products`, productController);
+app.use(`${root}/products`, auth, productController);
 app.use(logErrors);
 app.use(clientErrorHandler);
 

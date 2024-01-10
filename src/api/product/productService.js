@@ -1,7 +1,7 @@
 const ProductRepository = require("./productRepository");
 const bcrypt = require('bcrypt');
 const Joi = require("@hapi/joi");
-const { getSocket } = require('../webSockets/websocket');
+const { getIo } = require('../webSockets/websocket');
 Joi.objectId = require("joi-objectid")(Joi);
 
 const productSchema = require("./productSchema");
@@ -36,7 +36,7 @@ class ProductService {
       reqType: "POST",
     }).then(async () => {
       let newProduct = await this.repository.add(product);
-      getSocket().broadcast.emit('productAdded', { message: 'A new product has been added!' });
+      getIo().emit('productAdded', { message: 'A new product has been added!', data:product });
       console.log('new', newProduct)
       return newProduct;
     });

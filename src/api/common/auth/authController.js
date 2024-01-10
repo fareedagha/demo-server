@@ -23,13 +23,13 @@ router.post('/login', async (req, res) => {
         _id: user._id,
         name: user.name,
         email : user.email,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
       }
       const accessToken = authService.generateAuthToken(user, 3600); //3600
       // const refreshToken = authService.generateAuthToken(user, 4750); //4800
       return res.send({
-        token: accessToken
-        // user:userData,
+        // token: accessToken
+        user:{...userData,token: accessToken}
         // token: {
         //   access_token: accessToken,
         // refresh_token: refreshToken,

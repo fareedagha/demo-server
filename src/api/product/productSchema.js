@@ -9,7 +9,7 @@ const productSchema = Joi.object({
   sku: Joi.number(),
   desc: Joi.string(),
   image: Joi.string(),
-
+  createdByUserId:Joi.objectId(),
 });
 
 module.exports = productSchema
