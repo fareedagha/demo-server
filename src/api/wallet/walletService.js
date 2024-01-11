@@ -191,6 +191,7 @@ class WalletService {
         amount: amount,
         status: 'failed',
         orderId: orderId,
+        userId: data.userId,
         message: 'Widhraw Amount (failed due to incificeint amount to widraw)'
       })
       throw {
