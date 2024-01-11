@@ -35,10 +35,18 @@ app.use(bodyParser.json());
 const authController = require("./src/api/common/auth/authController");
 const userController = require("./src/api/common/user/userController");
 const productController = require("./src/api/product/productController");
+const walletController = require("./src/api/wallet/walletController");
+const transactionController = require("./src/api/transaction/transactionController");
+
+
 const auth = passport.authenticate("jwt", { session: false });
 app.use(`${root}/auth`, authController);
 app.use(`${root}/users`, userController);
 app.use(`${root}/products`, auth, productController);
+app.use(`${root}/wallets`, auth,walletController);
+app.use(`${root}/transactions`,auth,transactionController);
+
+
 app.use(logErrors);
 app.use(clientErrorHandler);
 

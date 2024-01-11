@@ -1,13 +1,13 @@
-const ProductRepository = require("./productRepository");
+const TransactionRepository = require("./transactionRepository");
 const bcrypt = require('bcrypt');
 const Joi = require("@hapi/joi");
 const { getIo } = require('../webSockets/websocket');
 Joi.objectId = require("joi-objectid")(Joi);
 
-const productSchema = require("./productSchema");
-class ProductService {
+const TransactionSchema = require("./transactionSchema");
+class TransactionService {
   constructor() {
-    this.repository = new ProductRepository();
+    this.repository = new TransactionRepository();
   }
 
   validate(product, context) {
@@ -15,30 +15,18 @@ class ProductService {
       abortEarly: false,
       context: context,
     };
-    return productSchema.validateAsync(product, options);
-  }
-
-  getCount() {
-    return this.repository.getCount();
-  }
-
-
-  findByProductname(name) {
-    return this.repository.findByProductname(name);
+    return TransactionSchema.validateAsync(product, options);
   }
 
   findById(id, params = undefined) {
     return this.repository.findById(id, params);
   }
 
-  addProduct(product) {
+  addTransaction(product) {
     return this.validate(product, {
       reqType: "POST",
     }).then(async () => {
-      let newProduct = await this.repository.add(product);
-      getIo().emit('productAdded', { message: 'A new product has been added!', data:product });
-      console.log('new', newProduct)
-      return newProduct;
+      return this.repository.add(product);
     });
   }
 
@@ -48,18 +36,14 @@ class ProductService {
     return this.repository.addMany(products);
   }
 
-  async editProduct(id, product) {
+  async editTransaction(id, product) {
     const updatedProduct = await this.repository.edit(id, product);
     return updatedProduct;
   }
 
-  async deleteProduct(id) {
+  async deleteTransaction(id) {
     const deleteDef = this.repository.delete(id);
     return deleteDef
-  }
-
-  changePassword(id, salt, passwordHash) {
-    return this.repository.changePassword(id, salt, passwordHash);
   }
 
   list(filter) {
@@ -83,4 +67,4 @@ class ProductService {
   }
 }
 
-module.exports = ProductService;
+module.exports = TransactionService;

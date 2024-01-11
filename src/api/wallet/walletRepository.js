@@ -4,54 +4,41 @@ const BaseRepository = require('../../db/baseRepository');
 // const helpers = require('../../helpers');
 
 
-class ProductRepository extends BaseRepository {
+class WalletRepository extends BaseRepository {
   constructor() {
-    super('products');
+    super('wallets');
   }
 
-  format(product) {
-    if (product.createdByUserId) {
-      product.createdByUserId = new ObjectId(product.createdByUserId);
+  format(data) {
+    if (data.userId) {
+      data.userId = new ObjectId(data.userId);
     }
-    return product;
+    return data;
   }
 
-  add(product) {
-    product = this.format(product);
+  add(data) {
+    data = this.format(data);
 
-    if (!product.createdAt) {
-      product.createdAt = new Date();
+    if (!data.createdAt) {
+      data.createdAt = new Date();
     }
 
-    return super.add(product);
+    return super.add(data);
   }
 
-  edit(id, product) {
-    product = this.format(product);
-    return super.edit(id, product);
-  }
-
- 
-
-  findByEmail(email) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({ email }));
-  }
-
-  findByProductname(productname) {
+  findByUserId(userId) {
     return this.dbClient
       .then(db => db
         .collection(this.collection)
         .findOne({
-          productname,
-          // blocked: {
-          //   $in: [null, false]
-          // }
+          userId
         }));
   }
 
+  edit(id, data) {
+    data = this.format(data);
+    return super.edit(id, data);
+  }
 
   listAggregated(params) {
     let filter = {
@@ -61,18 +48,13 @@ class ProductRepository extends BaseRepository {
       sortBy: params.sortBy,
       orderBy: params.orderBy
     }
-
-
-
-
     if (params.userId) {
       filter.pipeline.push({
         $match: {
-          createdByUserId: { $ne: new ObjectId(params.userId) }
+          userId:  new ObjectId(params.userId)
         }
       });
     }
-
 
     if (params.project) {
       filter.pipeline.push({
@@ -96,4 +78,4 @@ class ProductRepository extends BaseRepository {
 
 }
 
-module.exports = ProductRepository;
+module.exports = WalletRepository;

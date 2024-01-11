@@ -10,6 +10,7 @@ const config = dotenv.config().parsed;
 const nodemailer = require('nodemailer');
 const gmailUser = config.SENDER_EMAIL
 const appPassword = config.APP_PASSWORD
+const userService = new UserService();
 
 class AuthService {
   constructor() {}
@@ -27,6 +28,49 @@ class AuthService {
     }
 
     return user;
+  }
+
+  async login(data){
+    const { email, password } = data;
+    try {
+      const user = await userService.findOne({email:email });
+      if (!user) {
+         throw {
+        details: [
+          {
+            message: 'Invalid email or password',
+          },
+        ],
+      };
+      }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (passwordMatch) {
+        let userData = {
+          _id: user._id,
+          name: user.name,
+          email : user.email,
+          createdAt: user.createdAt,
+        }
+        const accessToken = this.generateAuthToken(user, 3600); //3600
+        return { user:{...userData,token: accessToken}}
+      } else {
+        throw {
+          details: [
+            {
+              message: 'Invalid email or password',
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      throw {
+        details: [
+          {
+            message: 'Invalid email or password',
+          },
+        ],
+      };
+    }
   }
 
 async forgetPassword(email) {
@@ -56,13 +100,13 @@ async forgetPassword(email) {
       const updatedUser = await userService.editUser(user._id, { password: generatePass });
       return updatedUser;
     } else {
-      throw {
-        details: [
-          {
-            message: 'User with this email does not exist',
-          },
-        ],
-      };
+        throw {
+          details: [
+            {
+              message: 'User with this email does not exist',
+            },
+          ],
+        };
     }
   } catch (error) {
     console.error('Error sending email:', error);
