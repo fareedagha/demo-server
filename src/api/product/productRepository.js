@@ -65,13 +65,13 @@ class ProductRepository extends BaseRepository {
 
 
 
-    if (params.userId) {
-      filter.pipeline.push({
-        $match: {
-          createdByUserId: { $ne: new ObjectId(params.userId) }
-        }
-      });
-    }
+    // if (params.userId) {
+    //   filter.pipeline.push({
+    //     $match: {
+    //       createdByUserId: { $ne: new ObjectId(params.userId) }
+    //     }
+    //   });
+    // }
 
 
     if (params.project) {
