@@ -9,6 +9,12 @@ const TransactionSchema = Joi.object({
   orderId: Joi.string(),
   message: Joi.string(),
   userId: Joi.objectId(),
+  checkoutDetail: Joi.object({
+    name: Joi.string(),
+    email: Joi.string(),
+    phone: Joi.string(),
+    address: Joi.string(),
+  }),
 });
 
 module.exports = TransactionSchema;

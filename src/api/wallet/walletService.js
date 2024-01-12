@@ -36,7 +36,7 @@ class WalletService {
   }
 
   async buyProduct(data) {
-    const { userId, productId } = data;
+    const { userId, productId, checkoutDetail } = data;
     const walletData = await this.findOne({ userId: new ObjectId(userId) });
     const product = await productService.findById(productId);
     const orderId = this.randomPassword(12);
@@ -48,6 +48,7 @@ class WalletService {
         orderId: orderId,
         message: "Buy Product (Failed due to insufficient balance)",
         userId: userId,
+        checkoutDetail:checkoutDetail
       });
 
       throw {
@@ -67,6 +68,8 @@ class WalletService {
         orderId: orderId,
         message: "Buy Product (failed due to product is out of stock)",
         userId: userId,
+        checkoutDetail:checkoutDetail
+
       });
       throw {
         details: [
@@ -92,6 +95,7 @@ class WalletService {
       orderId: orderId,
       message: "Buy Product",
       userId: userId,
+      checkoutDetail: checkoutDetail,
     });
     const updatedProduct = await this.repository.edit(walletData._id, {
       totalAmount: newWalletAmount,
