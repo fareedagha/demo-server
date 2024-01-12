@@ -1,6 +1,6 @@
-const { string } = require('@hapi/joi');
-const Joi = require('@hapi/joi');
-Joi.objectId = require('joi-objectid')(Joi);
+const { string } = require("@hapi/joi");
+const Joi = require("@hapi/joi");
+Joi.objectId = require("joi-objectid")(Joi);
 
 const userSchema = Joi.object({
   name: Joi.string(),
@@ -8,4 +8,4 @@ const userSchema = Joi.object({
   password: Joi.string(),
 });
 
-module.exports = userSchema
+module.exports = userSchema;

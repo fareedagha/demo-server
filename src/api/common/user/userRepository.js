@@ -1,12 +1,9 @@
-
-const { ObjectId } = require('mongodb');
-const BaseRepository = require('../../../db/baseRepository');
-// const helpers = require('../../helpers');
-
+const { ObjectId } = require("mongodb");
+const BaseRepository = require("../../../db/baseRepository");
 
 class UserRepository extends BaseRepository {
   constructor() {
-    super('users');
+    super("users");
   }
 
   format(user) {
@@ -28,66 +25,57 @@ class UserRepository extends BaseRepository {
     return super.edit(id, user);
   }
 
- 
-
   findByEmail(email) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({ email }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({ email })
+    );
   }
 
   findByUsername(username) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({
-          username,
-          // blocked: {
-          //   $in: [null, false]
-          // }
-        }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({
+        username,
+        // blocked: {
+        //   $in: [null, false]
+        // }
+      })
+    );
   }
 
   changePassword(id, salt, passwordHash) {
-    return this.dbClient
-      .then(db => db
+    return this.dbClient.then((db) =>
+      db
         .collection(this.collection)
-        .updateOne({ _id:new ObjectId(id) }, { $set: { salt, passwordHash } }));
+        .updateOne({ _id: new ObjectId(id) }, { $set: { salt, passwordHash } })
+    );
   }
 
-
   listAggregated(params) {
-    console.log('params', params)
     let filter = {
       pipeline: [],
       pageSize: params.pageSize,
       pageNumber: params.pageNumber,
       sortBy: params.sortBy,
-      orderBy: params.orderBy
-    }
-
-    
-
+      orderBy: params.orderBy,
+    };
 
     if (params.email) {
       filter.pipeline.push({
         $match: {
-          email: params.email
-        }
+          email: params.email,
+        },
       });
     }
 
-   
     if (params.project) {
       filter.pipeline.push({
-        $project: this.parseProjectParams(params.project)
-      })
+        $project: this.parseProjectParams(params.project),
+      });
     }
     return super.listAggregated(filter);
   }
 
-  parseProjectParams(project){
+  parseProjectParams(project) {
     for (const key in project) {
       if (project.hasOwnProperty(key)) {
         project[key] = parseInt(project[key]);
@@ -95,10 +83,6 @@ class UserRepository extends BaseRepository {
     }
     return project;
   }
-
-
-
-
 }
 
 module.exports = UserRepository;

@@ -1,5 +1,5 @@
 const UserRepository = require("./userRepository");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
@@ -41,11 +41,8 @@ class UserService {
       reqType: "POST",
     }).then(async () => {
       if (user.password) {
-        const salt = await bcrypt.genSalt(15)
+        const salt = await bcrypt.genSalt(15);
         user.password = await bcrypt.hash(user.password, salt);
-        // const { salt, passwordHash } = await cipher.saltHashPassword(user.password);
-        // user.salt = salt;
-        // user.passwordHash = passwordHash;
       }
       const u = await this.repository.listAggregated({ email: user.email });
       if (u.length > 0) {
@@ -58,12 +55,10 @@ class UserService {
         };
       }
       let newUser = await this.repository.add(user);
-      console.log('new', newUser)
+      console.log("new", newUser);
       return newUser;
     });
   }
-
-
 
   addMany(users) {
     return this.repository.addMany(users);
@@ -71,8 +66,8 @@ class UserService {
 
   async editUser(id, user) {
     if (user.password) {
-         const salt = await bcrypt.genSalt(15)
-        user.password = await bcrypt.hash(user.password, salt);
+      const salt = await bcrypt.genSalt(15);
+      user.password = await bcrypt.hash(user.password, salt);
     }
     const updatedUser = await this.repository.edit(id, user);
     return updatedUser;
@@ -80,7 +75,7 @@ class UserService {
 
   async deleteUser(id) {
     const deleteDef = this.repository.delete(id);
-    return deleteDef
+    return deleteDef;
   }
 
   changePassword(id, salt, passwordHash) {
@@ -100,7 +95,6 @@ class UserService {
       };
     });
   }
-
 
   randomPassword(length) {
     const lettersBig = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

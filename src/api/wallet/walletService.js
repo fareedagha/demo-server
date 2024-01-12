@@ -2,7 +2,7 @@ const WalletRepository = require("./walletRepository");
 const { ObjectId } = require("mongodb");
 const ProductService = require("../product/productService");
 const productService = new ProductService();
-const TransactionService = require('../transaction/transactionService');
+const TransactionService = require("../transaction/transactionService");
 const transactionService = new TransactionService();
 
 const Joi = require("@hapi/joi");
@@ -39,17 +39,17 @@ class WalletService {
     const { userId, productId } = data;
     const walletData = await this.findOne({ userId: new ObjectId(userId) });
     const product = await productService.findById(productId);
-    const orderId = this.randomPassword(12)
+    const orderId = this.randomPassword(12);
     if (product.price > walletData.totalAmount) {
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Purchase',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Purchase",
         amount: product.price,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
-        message: 'Buy Product (failed due to incificient balance)',
-        userId: userId
-      })
-      
+        message: "Buy Product (failed due to incificient balance)",
+        userId: userId,
+      });
+
       throw {
         details: [
           {
@@ -60,14 +60,14 @@ class WalletService {
     }
 
     if (product.quantity <= 0) {
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Purchase',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Purchase",
         amount: product.price,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
-        message: 'Buy Product (failed due to product is out of stock)',
-        userId: userId
-      })
+        message: "Buy Product (failed due to product is out of stock)",
+        userId: userId,
+      });
       throw {
         details: [
           {
@@ -78,41 +78,41 @@ class WalletService {
     }
 
     const newQuantity = product.quantity - 1;
-    const newWalletAmount = (walletData.totalAmount - product.price);
-    const newPurchaseAmount = (walletData.totalPurchase + product.price)
+    const newWalletAmount = walletData.totalAmount - product.price;
+    const newPurchaseAmount = walletData.totalPurchase + product.price;
     const updateProductQuantity = await productService.editProduct(
       product._id,
       { quantity: newQuantity }
     );
-   
-    const addTransaction =  await transactionService.addTransaction({
-      type: 'Purchase',
+
+    const addTransaction = await transactionService.addTransaction({
+      type: "Purchase",
       amount: product.price,
-      status: 'success',
+      status: "success",
       orderId: orderId,
-      message: 'Buy Product',
-      userId: userId
-    })
+      message: "Buy Product",
+      userId: userId,
+    });
     const updatedProduct = await this.repository.edit(walletData._id, {
       totalAmount: newWalletAmount,
-      totalPurchase: newPurchaseAmount
+      totalPurchase: newPurchaseAmount,
     });
     return updatedProduct;
   }
 
   async topUp(data) {
     let walletData = await this.findOne({ userId: new ObjectId(data.userId) });
-    const orderId = this.randomPassword(12)
+    const orderId = this.randomPassword(12);
     const amount = parseInt(data.amount, 10);
     if (!walletData) {
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Topup',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Topup",
         amount: amount,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
-        message: 'Topup (failed due to invalid user)',
-        userId: data.userId
-      })
+        message: "Topup (failed due to invalid user)",
+        userId: data.userId,
+      });
       throw {
         details: [
           {
@@ -125,14 +125,14 @@ class WalletService {
     const newAmount = walletData.totalAmount + amount;
     const newTopup = walletData.totalTopup + amount;
 
-    const addTransaction =  await transactionService.addTransaction({
-      type: 'Topup',
+    const addTransaction = await transactionService.addTransaction({
+      type: "Topup",
       amount: amount,
-      status: 'success',
+      status: "success",
       orderId: orderId,
       message: `Topup Amount of ${amount}`,
-      userId: data.userId
-    })
+      userId: data.userId,
+    });
 
     const updatedUser = await this.repository.edit(walletData._id, {
       totalAmount: newAmount,
@@ -146,18 +146,17 @@ class WalletService {
       userId: new ObjectId(data.userId),
     });
     const amount = parseInt(data.amount, 10);
-    const orderId = this.randomPassword(12)
+    const orderId = this.randomPassword(12);
 
     if (!walletData) {
-
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Widthraw',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Withdraw",
         amount: amount,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
-        message: 'Widhraw Amount (failed due to invalid user)',
-        userId: data.userId
-      })
+        message: "Widhraw Amount (failed due to invalid user)",
+        userId: data.userId,
+      });
 
       throw {
         details: [
@@ -168,14 +167,14 @@ class WalletService {
       };
     }
     if (amount <= 0) {
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Widthraw',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Withdraw",
         amount: amount,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
-        message: 'Widhraw Amount (failed due to invalid amount)',
-        userId: data.userId
-      })
+        message: "Withdraw Amount (failed due to invalid amount)",
+        userId: data.userId,
+      });
       throw {
         details: [
           {
@@ -186,14 +185,14 @@ class WalletService {
     }
 
     if (amount > walletData.totalAmount) {
-      const addTransaction =  await transactionService.addTransaction({
-        type: 'Widthraw',
+      const addTransaction = await transactionService.addTransaction({
+        type: "Withdraw",
         amount: amount,
-        status: 'failed',
+        status: "failed",
         orderId: orderId,
         userId: data.userId,
-        message: 'Widhraw Amount (failed due to incificeint amount to widraw)'
-      })
+        message: "Widhraw Amount (failed due to incificeint amount to widraw)",
+      });
       throw {
         details: [
           {
@@ -206,14 +205,14 @@ class WalletService {
     let newAmount = walletData.totalAmount - amount;
     let newWidraw = walletData.totalWidraw + amount;
 
-    const addTransaction =  await transactionService.addTransaction({
-      type: 'Widthraw',
+    const addTransaction = await transactionService.addTransaction({
+      type: "Withdraw",
       amount: amount,
-      status: 'success',
+      status: "success",
       orderId: orderId,
-      message: `Widthraw Amount of ${amount}`,
-      userId: data.userId
-    })
+      message: `Withdraw Amount of ${amount}`,
+      userId: data.userId,
+    });
     const updatedUser = await this.repository.edit(walletData._id, {
       totalAmount: newAmount,
       totalWidraw: newWidraw,
@@ -266,7 +265,7 @@ class WalletService {
     const lettersBig = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const lettersSmall = "abcdefghijklmnopqrstuvwxyz";
     const symbols = "!@#$%^&*()-+<>";
-    const numbers = "0123456789"
+    const numbers = "0123456789";
 
     var pass = "";
     for (var x = 0; x < length; x++) {
@@ -279,18 +278,18 @@ class WalletService {
         var i = Math.floor(Math.random() * lettersSmall.length);
         pass += lettersSmall.charAt(i);
       }
-      
+
       if (x === 2) {
         var i = Math.floor(Math.random() * symbols.length);
         pass += symbols.charAt(i);
       }
-      
+
       if (x > 2) {
         var i = Math.floor(Math.random() * numbers.length);
         pass += numbers.charAt(i);
       }
     }
-    
+
     return pass;
   }
 

@@ -1,12 +1,9 @@
-
-const { ObjectId } = require('mongodb');
-const BaseRepository = require('../../db/baseRepository');
-// const helpers = require('../../helpers');
-
+const { ObjectId } = require("mongodb");
+const BaseRepository = require("../../db/baseRepository");
 
 class ProductRepository extends BaseRepository {
   constructor() {
-    super('products');
+    super("products");
   }
 
   format(product) {
@@ -31,27 +28,22 @@ class ProductRepository extends BaseRepository {
     return super.edit(id, product);
   }
 
- 
-
   findByEmail(email) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({ email }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({ email })
+    );
   }
 
   findByProductname(productname) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({
-          productname,
-          // blocked: {
-          //   $in: [null, false]
-          // }
-        }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({
+        productname,
+        // blocked: {
+        //   $in: [null, false]
+        // }
+      })
+    );
   }
-
 
   listAggregated(params) {
     let filter = {
@@ -59,25 +51,13 @@ class ProductRepository extends BaseRepository {
       pageSize: params.pageSize,
       pageNumber: params.pageNumber,
       sortBy: params.sortBy,
-      orderBy: params.orderBy
-    }
-
-
-
-
-    // if (params.userId) {
-    //   filter.pipeline.push({
-    //     $match: {
-    //       createdByUserId: { $ne: new ObjectId(params.userId) }
-    //     }
-    //   });
-    // }
-
+      orderBy: params.orderBy,
+    };
 
     if (params.project) {
       filter.pipeline.push({
-        $project: this.parseProjectParams(params.project)
-      })
+        $project: this.parseProjectParams(params.project),
+      });
     }
     return super.listAggregated(filter);
   }
@@ -90,10 +70,6 @@ class ProductRepository extends BaseRepository {
     }
     return project;
   }
-
-
-
-
 }
 
 module.exports = ProductRepository;

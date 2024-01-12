@@ -1,12 +1,9 @@
-
-const { ObjectId } = require('mongodb');
-const BaseRepository = require('../../db/baseRepository');
-// const helpers = require('../../helpers');
-
+const { ObjectId } = require("mongodb");
+const BaseRepository = require("../../db/baseRepository");
 
 class WalletRepository extends BaseRepository {
   constructor() {
-    super('wallets');
+    super("wallets");
   }
 
   format(data) {
@@ -27,12 +24,11 @@ class WalletRepository extends BaseRepository {
   }
 
   findByUserId(userId) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({
-          userId
-        }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({
+        userId,
+      })
+    );
   }
 
   edit(id, data) {
@@ -46,20 +42,20 @@ class WalletRepository extends BaseRepository {
       pageSize: params.pageSize,
       pageNumber: params.pageNumber,
       sortBy: params.sortBy,
-      orderBy: params.orderBy
-    }
+      orderBy: params.orderBy,
+    };
     if (params.userId) {
       filter.pipeline.push({
         $match: {
-          userId:  new ObjectId(params.userId)
-        }
+          userId: new ObjectId(params.userId),
+        },
       });
     }
 
     if (params.project) {
       filter.pipeline.push({
-        $project: this.parseProjectParams(params.project)
-      })
+        $project: this.parseProjectParams(params.project),
+      });
     }
     return super.listAggregated(filter);
   }
@@ -72,10 +68,6 @@ class WalletRepository extends BaseRepository {
     }
     return project;
   }
-
-
-
-
 }
 
 module.exports = WalletRepository;

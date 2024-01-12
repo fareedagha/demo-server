@@ -1,12 +1,10 @@
-
-const { ObjectId } = require('mongodb');
-const BaseRepository = require('../../db/baseRepository');
-// const helpers = require('../../helpers');
+const { ObjectId } = require("mongodb");
+const BaseRepository = require("../../db/baseRepository");
 
 
 class TransactionRepository extends BaseRepository {
   constructor() {
-    super('transactions');
+    super("transactions");
   }
 
   format(data) {
@@ -31,13 +29,10 @@ class TransactionRepository extends BaseRepository {
     return super.edit(id, data);
   }
 
- 
-
   findByEmail(email) {
-    return this.dbClient
-      .then(db => db
-        .collection(this.collection)
-        .findOne({ email }));
+    return this.dbClient.then((db) =>
+      db.collection(this.collection).findOne({ email })
+    );
   }
 
   listAggregated(params) {
@@ -46,22 +41,21 @@ class TransactionRepository extends BaseRepository {
       pageSize: params.pageSize,
       pageNumber: params.pageNumber,
       sortBy: params.sortBy,
-      orderBy: params.orderBy
-    }
+      orderBy: params.orderBy,
+    };
 
     if (params.userId) {
       filter.pipeline.push({
         $match: {
-          userId: new ObjectId(params.userId)
-        }
+          userId: new ObjectId(params.userId),
+        },
       });
     }
 
-
     if (params.project) {
       filter.pipeline.push({
-        $project: this.parseProjectParams(params.project)
-      })
+        $project: this.parseProjectParams(params.project),
+      });
     }
     return super.listAggregated(filter);
   }
@@ -74,10 +68,6 @@ class TransactionRepository extends BaseRepository {
     }
     return project;
   }
-
-
-
-
 }
 
 module.exports = TransactionRepository;

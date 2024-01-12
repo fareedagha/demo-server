@@ -1,7 +1,7 @@
 const TransactionRepository = require("./transactionRepository");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const Joi = require("@hapi/joi");
-const { getIo } = require('../webSockets/websocket');
+const { getIo } = require("../webSockets/websocket");
 Joi.objectId = require("joi-objectid")(Joi);
 
 const TransactionSchema = require("./transactionSchema");
@@ -30,8 +30,6 @@ class TransactionService {
     });
   }
 
-
-
   addMany(products) {
     return this.repository.addMany(products);
   }
@@ -43,7 +41,7 @@ class TransactionService {
 
   async deleteTransaction(id) {
     const deleteDef = this.repository.delete(id);
-    return deleteDef
+    return deleteDef;
   }
 
   list(filter) {
@@ -59,8 +57,6 @@ class TransactionService {
       };
     });
   }
-
-
 
   findOne(params) {
     return this.repository.findByFilter(params);

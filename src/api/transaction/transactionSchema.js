@@ -1,6 +1,6 @@
-const { string } = require('@hapi/joi');
-const Joi = require('@hapi/joi');
-Joi.objectId = require('joi-objectid')(Joi);
+const { string } = require("@hapi/joi");
+const Joi = require("@hapi/joi");
+Joi.objectId = require("joi-objectid")(Joi);
 
 const TransactionSchema = Joi.object({
   type: Joi.string(),
@@ -8,7 +8,7 @@ const TransactionSchema = Joi.object({
   status: Joi.string(),
   orderId: Joi.string(),
   message: Joi.string(),
-  userId:Joi.objectId(),
+  userId: Joi.objectId(),
 });
 
-module.exports = TransactionSchema
+module.exports = TransactionSchema;
