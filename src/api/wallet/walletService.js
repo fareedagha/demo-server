@@ -46,14 +46,14 @@ class WalletService {
         amount: product.price,
         status: "failed",
         orderId: orderId,
-        message: "Buy Product (failed due to incificient balance)",
+        message: "Buy Product (Failed due to insufficient balance)",
         userId: userId,
       });
 
       throw {
         details: [
           {
-            message: "You have incificient balance to buy this product",
+            message: "You have insufficient balance to buy this product",
           },
         ],
       };
@@ -191,12 +191,12 @@ class WalletService {
         status: "failed",
         orderId: orderId,
         userId: data.userId,
-        message: "Widhraw Amount (failed due to incificeint amount to widraw)",
+        message: "Withdraw Amount (Failed due to insufficient  amount to widraw)",
       });
       throw {
         details: [
           {
-            message: "You have incificeint amount to widraw",
+            message: "You have insufficient amount to widraw",
           },
         ],
       };
