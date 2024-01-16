@@ -38,8 +38,4 @@ router.post("/sign-out", (req, res) => {
   res.send({ message: "ok" });
 });
 
-// router.post('/refresh-token', (req, res) => {
-//
-// });
-
 module.exports = router;

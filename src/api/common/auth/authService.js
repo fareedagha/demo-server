@@ -93,7 +93,7 @@ class AuthService {
 
         let info = await transporter.sendMail({
           from: gmailUser,
-          to: email, // Use the user's email as the recipient
+          to: email, 
           subject: "Forgot Password",
           text: `This is your new password for Product Demo App: ${generatePass}`,
         });
@@ -133,10 +133,7 @@ class AuthService {
 
   isTokenValid(token) {
     const decodedToken = jwt.decode(token);
-    // console.log('decoded', decodedToken);
-
     const curTime = Math.round(Date.now() / 1000);
-    // console.log('exp', decodedToken.exp, 'current', curTime );
     if (decodedToken.exp > curTime) {
       // console.log('Refresh Active');
       return true;

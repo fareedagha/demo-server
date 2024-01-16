@@ -46,8 +46,7 @@ class TransactionService {
 
   list(filter) {
     return Promise.all([
-      this.repository.listAggregated(filter),
-      // this.repository.getCountFiltered(filter),
+      this.repository.listAggregated(filter)
     ]).then(([data]) => {
       return {
         data: data,
